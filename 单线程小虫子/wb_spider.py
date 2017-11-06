@@ -14,7 +14,6 @@ cookie = {
 
 def spider(url):
     # 发起爬虫请求
-
     content = requests.post(url, cookies=cookie)
     # 设置编码防止乱码
     if content.encoding == 'ISO-8859-1':
@@ -22,18 +21,23 @@ def spider(url):
     else:
         content.encoding = 'utf-8'
     selector = etree.HTML(content.content)
-    selector = selector.xpath('//div[@class="c"]/div/span[@class="ctt"]')
+    # selector = selector.xpath('//div[@class="c"]/div/span[@class="ctt"]')
+    # .replace(" ", "").replace("\\n", "").replace("\\r", "").replace('"', "")
+    selector = selector.xpath('//div[@id]')
     for index, each in enumerate(selector):
-        each = each.xpath('string(.)').replace(" ", "").replace("\\n", "").replace("\\r", "").replace('"', "")
-        if each != '':
-            each = "第" + str(index + 1) + "条微博：" + each + '\r'
-            print(each)
-        f.writelines(each)
+        text = each.xpath('div[1]/span[@class="ctt"]/text()')
+        times = each.xpath('div[2]/span[@class="ct"]/text()')
+        article = "微博发布时间：" + str(times) + '\n' + "发布内容：" + str(text) + '\n\n'
+        print(article)
+        f.writelines(article)
+
+
+
 if __name__ == '__main__':
     pool = ThreadPool(4)
     f = open('yumei.txt', 'a', encoding='utf-8')
     page = []
-    for i in range(1, 40):
+    for i in range(1, 43):
         new_url = "http://weibo.cn/u/2211085884?page=" + str(i)
         page.append(new_url)
     results = pool.map(spider, page)
