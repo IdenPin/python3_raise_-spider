@@ -17,7 +17,6 @@ content = selector.xpath('//div[@class="pl2"]/p/text()')
 # print(selector.xpath('string(.)'))
 
 
-
 f = open('content.txt', 'a', encoding='utf-8');
 for index, each in enumerate(content):
     # text = each.xpath('string(.)')
